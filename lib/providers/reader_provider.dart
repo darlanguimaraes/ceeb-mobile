@@ -22,4 +22,9 @@ class ReaderProvider with ChangeNotifier {
     await readerController.persist(reader);
     await loadReaders();
   }
+
+  Future<List<Reader>> find(String name) async {
+    final readerController = ReaderController();
+    return await readerController.find(name);
+  }
 }

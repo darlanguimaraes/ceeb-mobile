@@ -4,6 +4,8 @@ import 'package:ceeb_mobile/pages/categories_page.dart';
 import 'package:ceeb_mobile/pages/category_form_page.dart';
 import 'package:ceeb_mobile/pages/invoice_form_page.dart';
 import 'package:ceeb_mobile/pages/invoices_page.dart';
+import 'package:ceeb_mobile/pages/lending_form_page.dart';
+import 'package:ceeb_mobile/pages/lending_page.dart';
 import 'package:ceeb_mobile/pages/login_or_home_page.dart';
 import 'package:ceeb_mobile/pages/reader_form_page.dart';
 import 'package:ceeb_mobile/pages/readers_page.dart';
@@ -11,6 +13,7 @@ import 'package:ceeb_mobile/providers/auth_provider.dart';
 import 'package:ceeb_mobile/providers/book_provider.dart';
 import 'package:ceeb_mobile/providers/category_provider.dart';
 import 'package:ceeb_mobile/providers/invoice_provider.dart';
+import 'package:ceeb_mobile/providers/lending_provider.dart';
 import 'package:ceeb_mobile/providers/reader_provider.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:ceeb_mobile/utils/hive_utils.dart';
@@ -39,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InvoiceProvider()),
         ChangeNotifierProvider(create: (_) => ReaderProvider()),
         ChangeNotifierProvider(create: (_) => BookProvider()),
+        ChangeNotifierProvider(create: (_) => LendingProvider()),
       ],
       child: MaterialApp(
         title: 'CEEB',
@@ -73,6 +77,8 @@ class MyApp extends StatelessWidget {
           AppRoutes.readerForm: (ctx) => const ReaderFormPage(),
           AppRoutes.books: (ctx) => const BooksPage(),
           AppRoutes.bookForm: (ctx) => const BookFormPage(),
+          AppRoutes.lending: (ctx) => const LendingPage(),
+          AppRoutes.lendingForm: (ctx) => const LendingFormPage(),
         },
         debugShowCheckedModeBanner: false,
       ),

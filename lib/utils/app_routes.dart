@@ -9,4 +9,6 @@ class AppRoutes {
   static const readerForm = '/reader-form';
   static const books = '/books';
   static const bookForm = '/book-form';
+  static const lending = '/lending';
+  static const lendingForm = '/lending-form';
 }

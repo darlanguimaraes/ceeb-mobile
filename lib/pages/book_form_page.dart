@@ -49,6 +49,7 @@ class _BookFormPageState extends State<BookFormPage> {
       book.code = _formData['code'].toString();
       book.edition = _formData['edition']?.toString();
       book.borrow = false;
+      book.sync = false;
 
       await Provider.of<BookProvider>(context, listen: false).persist(book);
       await showDialog<void>(

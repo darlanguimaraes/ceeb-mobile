@@ -60,6 +60,7 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
       invoice.value = double.tryParse(_formData['value'].toString()) ?? 0;
       invoice.date = DateFormat('dd/MM/yyyy').parse(dateController.text);
       invoice.paymentType = _formData['paymentType'].toString();
+      invoice.sync = false;
 
       await Provider.of<InvoiceProvider>(context, listen: false)
           .persist(invoice);
@@ -76,6 +77,7 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
           ],
         ),
       );
+      Navigator.of(context).pop();
     } catch (e) {
       print(e);
       await showDialog<void>(

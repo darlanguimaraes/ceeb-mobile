@@ -46,6 +46,7 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
       reader.phone = _formData['phone']?.toString();
       reader.address = _formData['address']?.toString();
       reader.city = _formData['city']?.toString();
+      reader.sync = false;
 
       await Provider.of<ReaderProvider>(context, listen: false).persist(reader);
       await showDialog<void>(

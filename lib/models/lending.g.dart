@@ -27,13 +27,17 @@ class LendingAdapter extends TypeAdapter<Lending> {
       ..updatedAt = fields[7] as DateTime?
       ..returned = fields[8] == null ? false : fields[8] as bool?
       ..sync = fields[9] == null ? false : fields[9] as bool?
-      ..remoteId = fields[10] as String?;
+      ..remoteId = fields[10] as String?
+      ..readerName = fields[13] as String?
+      ..bookName = fields[14] as String?
+      ..bookCode = fields[15] as String?
+      ..bookEdition = fields[16] as String?;
   }
 
   @override
   void write(BinaryWriter writer, Lending obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -55,7 +59,15 @@ class LendingAdapter extends TypeAdapter<Lending> {
       ..writeByte(9)
       ..write(obj.sync)
       ..writeByte(10)
-      ..write(obj.remoteId);
+      ..write(obj.remoteId)
+      ..writeByte(13)
+      ..write(obj.readerName)
+      ..writeByte(14)
+      ..write(obj.bookName)
+      ..writeByte(15)
+      ..write(obj.bookCode)
+      ..writeByte(16)
+      ..write(obj.bookEdition);
   }
 
   @override

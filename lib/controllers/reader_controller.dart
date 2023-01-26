@@ -15,11 +15,35 @@ class ReaderController {
     }
   }
 
+  Future<List<Reader>> find(String name) async {
+    try {
+      final readers = await Hive.openBox<Reader>(TableName.reader.name);
+      print('aqui');
+      return readers.values
+          .where((reader) =>
+              reader.name!.toLowerCase().contains(name.toLowerCase()))
+          .toList();
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   Future<void> persist(Reader reader) async {
-    final categories = await Hive.openBox<Reader>(TableName.reader.name);
+    final readers = await Hive.openBox<Reader>(TableName.reader.name);
     reader.id ??= uuid.v4();
     reader.updatedAt = DateTime.now();
     reader.sync = false;
-    await categories.put(reader.id, reader);
+    await readers.put(reader.id, reader);
+  }
+
+  Future<void> hasBook(String id, bool openLoan) async {
+    final readers = await Hive.openBox<Reader>(TableName.reader.name);
+    var reader = readers.get(id);
+    if (reader != null) {
+      reader.openLoan = openLoan;
+      reader.sync = false;
+      reader.updatedAt = DateTime.now();
+      await persist(reader);
+    }
   }
 }

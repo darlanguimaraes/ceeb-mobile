@@ -22,4 +22,9 @@ class BookProvider with ChangeNotifier {
     await bookController.persist(book);
     await loadBooks();
   }
+
+  Future<List<Book>> find(String name) async {
+    final bookController = BookController();
+    return await bookController.find(name);
+  }
 }

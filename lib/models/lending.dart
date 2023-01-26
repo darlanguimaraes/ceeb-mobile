@@ -36,4 +36,16 @@ class Lending extends HiveObject {
 
   @HiveField(10)
   String? remoteId;
+
+  @HiveField(13)
+  String? readerName;
+
+  @HiveField(14)
+  String? bookName;
+
+  @HiveField(15)
+  String? bookCode;
+
+  @HiveField(16)
+  String? bookEdition;
 }

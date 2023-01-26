@@ -40,6 +40,7 @@ class _CategoryFormState extends State<CategoryForm> {
       final category = Category();
       category.id = _formData['id']?.toString();
       category.name = _formData['name'].toString();
+      category.sync = false;
 
       await Provider.of<CategoryProvider>(context, listen: false)
           .persist(category);

@@ -1,22 +1,22 @@
 import 'package:ceeb_mobile/components/app_drawer.dart';
-import 'package:ceeb_mobile/components/invoice_list_item.dart';
-import 'package:ceeb_mobile/providers/invoice_provider.dart';
+import 'package:ceeb_mobile/components/lending_list_item.dart';
+import 'package:ceeb_mobile/providers/lending_provider.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Invoices extends StatelessWidget {
-  const Invoices({super.key});
+class LendingPage extends StatelessWidget {
+  const LendingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contas'),
+        title: const Text('Empréstimos e Devoluções'),
         actions: [
           IconButton(
             onPressed: () =>
-                Navigator.of(context).pushNamed(AppRoutes.invoiceForm),
+                Navigator.of(context).pushNamed(AppRoutes.lendingForm),
             icon: const Icon(Icons.add),
           ),
         ],
@@ -24,19 +24,19 @@ class Invoices extends StatelessWidget {
       drawer: const AppDrawer(),
       body: FutureBuilder(
         future:
-            Provider.of<InvoiceProvider>(context, listen: false).loadInvoices(),
+            Provider.of<LendingProvider>(context, listen: false).loadLendings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.error != null) {
             return const Center(child: Text('Ocorreu um erro!'));
           } else {
-            return Consumer<InvoiceProvider>(
-              builder: ((ctx, invoice, child) => ListView.builder(
-                    itemCount: invoice.count,
+            return Consumer<LendingProvider>(
+              builder: ((ctx, lending, child) => ListView.builder(
+                    itemCount: lending.count,
                     itemBuilder: ((ctx, index) => Column(
                           children: [
-                            InvoiceListItem(invoice.invoices[index]),
+                            LendingListItem(lending.lendings[index]),
                             const Divider(),
                           ],
                         )),

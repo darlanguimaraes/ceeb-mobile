@@ -17,7 +17,8 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.library_books),
             title: const Text('Emprésitimos e Devoluções'),
-            onTap: () {},
+            onTap: () =>
+                Navigator.of(context).pushReplacementNamed(AppRoutes.lending),
           ),
           const Divider(),
           ListTile(
