@@ -1,0 +1,1 @@
+enum PaymentType { Dinheiro, PIX }
