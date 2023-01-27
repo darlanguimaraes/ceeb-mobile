@@ -8,6 +8,7 @@ class AuthProvider with ChangeNotifier {
   String? _password;
 
   bool get isAuth {
+    // return _token != null ? true : false;
     return true;
   }
 

@@ -18,7 +18,6 @@ class ReaderController {
   Future<List<Reader>> find(String name) async {
     try {
       final readers = await Hive.openBox<Reader>(TableName.reader.name);
-      print('aqui');
       return readers.values
           .where((reader) =>
               reader.name!.toLowerCase().contains(name.toLowerCase()))
@@ -44,6 +43,15 @@ class ReaderController {
       reader.sync = false;
       reader.updatedAt = DateTime.now();
       await persist(reader);
+    }
+  }
+
+  Future<List<Reader>> listForSynchronize() async {
+    try {
+      final readers = await Hive.openBox<Reader>(TableName.reader.name);
+      return readers.values.where((reader) => reader.sync == false).toList();
+    } catch (e) {
+      throw Exception(e);
     }
   }
 }

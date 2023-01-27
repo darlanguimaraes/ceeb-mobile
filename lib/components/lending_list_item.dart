@@ -33,7 +33,7 @@ class LendingListItem extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () => Navigator.of(context).pushNamed(
-                AppRoutes.lendingForm,
+                AppRoutes.lendingReturn,
                 arguments: lending,
               ),
               icon: const Icon(Icons.arrow_circle_left_outlined),

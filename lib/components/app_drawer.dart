@@ -56,6 +56,13 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
+            leading: const Icon(Icons.sync),
+            title: const Text('Sincronizar'),
+            onTap: () => Navigator.of(context)
+                .pushReplacementNamed(AppRoutes.synchronize),
+          ),
+          const Divider(),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sair'),
             onTap: () {},

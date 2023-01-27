@@ -183,7 +183,6 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                     );
                                   },
                                   onSelected: (Reader selection) {
-                                    print('Selected: ${selection.name}');
                                     setState(() {
                                       readerId = selection.id!;
                                       readerName = selection.name!;
@@ -253,6 +252,9 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                     Autocomplete<Book>(
                                   optionsBuilder:
                                       (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text.length <= 4) {
+                                      return [];
+                                    }
                                     return books.books
                                         .where((Book county) => county.name!
                                             .toLowerCase()

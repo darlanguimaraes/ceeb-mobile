@@ -11,4 +11,6 @@ class AppRoutes {
   static const bookForm = '/book-form';
   static const lending = '/lending';
   static const lendingForm = '/lending-form';
+  static const lendingReturn = '/lending-return';
+  static const synchronize = '/synchronize';
 }

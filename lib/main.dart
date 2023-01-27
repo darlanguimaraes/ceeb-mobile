@@ -6,9 +6,11 @@ import 'package:ceeb_mobile/pages/invoice_form_page.dart';
 import 'package:ceeb_mobile/pages/invoices_page.dart';
 import 'package:ceeb_mobile/pages/lending_form_page.dart';
 import 'package:ceeb_mobile/pages/lending_page.dart';
+import 'package:ceeb_mobile/pages/lending_return_page.dart';
 import 'package:ceeb_mobile/pages/login_or_home_page.dart';
 import 'package:ceeb_mobile/pages/reader_form_page.dart';
 import 'package:ceeb_mobile/pages/readers_page.dart';
+import 'package:ceeb_mobile/pages/synchronize_page.dart';
 import 'package:ceeb_mobile/providers/auth_provider.dart';
 import 'package:ceeb_mobile/providers/book_provider.dart';
 import 'package:ceeb_mobile/providers/category_provider.dart';
@@ -79,6 +81,8 @@ class MyApp extends StatelessWidget {
           AppRoutes.bookForm: (ctx) => const BookFormPage(),
           AppRoutes.lending: (ctx) => const LendingPage(),
           AppRoutes.lendingForm: (ctx) => const LendingFormPage(),
+          AppRoutes.lendingReturn: (ctx) => const LendingReturnPage(),
+          AppRoutes.synchronize: (ctx) => const SynchronizePage(),
         },
         debugShowCheckedModeBanner: false,
       ),
