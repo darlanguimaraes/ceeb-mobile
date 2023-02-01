@@ -18,7 +18,6 @@ class LendingFormPage extends StatefulWidget {
 
 class _LendingFormPageState extends State<LendingFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _formData = <String, dynamic>{};
   bool _isLoading = false;
 
   String readerId = '';
@@ -27,17 +26,35 @@ class _LendingFormPageState extends State<LendingFormPage> {
   String bookName = '';
   String bookCode = '';
 
-  List<Book> _books = [];
-  List<Reader> _readers = [];
-
   TextEditingController dateController = TextEditingController();
   TextEditingController filterReader = TextEditingController();
+
+  Future? getListBooks;
+  Future? getListReaders;
+  final filterBookController = TextEditingController();
+  final filterReaderController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     dateController.text = '';
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dateController.dispose();
+    filterBookController.dispose();
+    filterReaderController.dispose();
+  }
+
+  Future<void> _loadBooksFilter(BuildContext context) =>
+      Provider.of<BookProvider>(context, listen: false)
+          .loadBooksFilter(filterBookController.text);
+
+  Future<void> _loadReadersFilter(BuildContext context) =>
+      Provider.of<ReaderProvider>(context, listen: false)
+          .loadReadersFilter(filterReaderController.text);
 
   Future<void> _submitForm() async {
     _formKey.currentState?.save();
@@ -63,7 +80,8 @@ class _LendingFormPageState extends State<LendingFormPage> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('SUCESSO!'),
-          content: const Text(''),
+          content: Text(
+              'Data de Entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate ?? DateTime.now())}'),
           actions: [
             TextButton(
               child: const Text('Ok'),
@@ -74,7 +92,6 @@ class _LendingFormPageState extends State<LendingFormPage> {
       );
       Navigator.of(context).pop();
     } catch (e) {
-      print(e);
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -99,7 +116,10 @@ class _LendingFormPageState extends State<LendingFormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Empréstimo"),
+        title: const Text(
+          "Empréstimo",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -135,192 +155,216 @@ class _LendingFormPageState extends State<LendingFormPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Leitor',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      FutureBuilder(
-                        future:
-                            Provider.of<ReaderProvider>(context, listen: false)
-                                .loadReaders(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.error != null) {
-                            return const Center(
-                                child: Text('Ocorreu um erro!'));
-                          } else {
-                            return SizedBox(
-                              child: Consumer<ReaderProvider>(
-                                builder: (context, readers, child) =>
-                                    Autocomplete<Reader>(
-                                  optionsBuilder:
-                                      (TextEditingValue textEditingValue) {
-                                    return readers.readers
-                                        .where((Reader county) => county.name!
-                                            .toLowerCase()
-                                            .startsWith(textEditingValue.text
-                                                .toLowerCase()))
-                                        .toList();
-                                  },
-                                  displayStringForOption: (Reader option) =>
-                                      option.name!,
-                                  fieldViewBuilder: (BuildContext context,
-                                      TextEditingController
-                                          fieldTextEditingController,
-                                      FocusNode fieldFocusNode,
-                                      VoidCallback onFieldSubmitted) {
-                                    return TextField(
-                                      controller: fieldTextEditingController,
-                                      focusNode: fieldFocusNode,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    );
-                                  },
-                                  onSelected: (Reader selection) {
-                                    setState(() {
-                                      readerId = selection.id!;
-                                      readerName = selection.name!;
-                                    });
-                                  },
-                                  optionsViewBuilder: (BuildContext context,
-                                      AutocompleteOnSelected<Reader> onSelected,
-                                      Iterable<Reader> options) {
-                                    return Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Material(
-                                        child: Container(
-                                          width: 300,
-                                          color: Colors.grey,
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.all(10.0),
-                                            itemCount: options.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              final Reader option =
-                                                  options.elementAt(index);
-
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  onSelected(option);
-                                                },
-                                                child: ListTile(
-                                                  title: Text(option.name!,
-                                                      style: const TextStyle(
-                                                          color: Colors.white)),
-                                                ),
-                                              );
+                      Row(
+                        children: [
+                          Text(bookName.isEmpty
+                              ? 'Pesquise o livro no botão ao lado'
+                              : '$bookName - $bookCode'),
+                          IconButton(
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Livros"),
+                                  content: SizedBox(
+                                    width: deviceSize.width - 100,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: deviceSize.width / 2,
+                                              child: TextField(
+                                                controller:
+                                                    filterBookController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText: 'Pesquisar'),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => setState(() {
+                                                getListBooks =
+                                                    _loadBooksFilter(context);
+                                              }),
+                                              icon: Icon(Icons.search),
+                                            )
+                                          ],
+                                        ),
+                                        Expanded(
+                                          child: FutureBuilder(
+                                            future: getListBooks,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              } else if (snapshot.error !=
+                                                  null) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'Ocorreu um erro!'));
+                                              } else {
+                                                return Consumer<BookProvider>(
+                                                  builder:
+                                                      ((ctx, values, child) =>
+                                                          ListView.builder(
+                                                            itemCount:
+                                                                values.count,
+                                                            itemBuilder:
+                                                                ((ctx, index) =>
+                                                                    Column(
+                                                                      children: [
+                                                                        ListTile(
+                                                                          title: Text(values
+                                                                              .books[index]
+                                                                              .name!),
+                                                                          subtitle: Text(values
+                                                                              .books[index]
+                                                                              .code!),
+                                                                          trailing: values.books[index].borrow == false
+                                                                              ? IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      bookId = values.books[index].id!;
+                                                                                      bookName = values.books[index].name!;
+                                                                                      bookCode = values.books[index].code!;
+                                                                                    });
+                                                                                    Navigator.of(context).pop();
+                                                                                  },
+                                                                                  icon: const Icon(
+                                                                                    Icons.check_circle_outline,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                )
+                                                                              : const Icon(
+                                                                                  Icons.error_outline,
+                                                                                  color: Colors.red,
+                                                                                ),
+                                                                        ),
+                                                                        const Divider(),
+                                                                      ],
+                                                                    )),
+                                                          )),
+                                                );
+                                              }
                                             },
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          }
-                        },
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            icon: const Icon(Icons.search),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 20),
-                      const Text('Livro',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          )),
-                      FutureBuilder(
-                        future:
-                            Provider.of<BookProvider>(context, listen: false)
-                                .loadBooks(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.error != null) {
-                            return const Center(
-                                child: Text('Ocorreu um erro!'));
-                          } else {
-                            return SizedBox(
-                              child: Consumer<BookProvider>(
-                                builder: (context, books, child) =>
-                                    Autocomplete<Book>(
-                                  optionsBuilder:
-                                      (TextEditingValue textEditingValue) {
-                                    if (textEditingValue.text.length <= 4) {
-                                      return [];
-                                    }
-                                    return books.books
-                                        .where((Book county) => county.name!
-                                            .toLowerCase()
-                                            .startsWith(textEditingValue.text
-                                                .toLowerCase()))
-                                        .toList();
-                                  },
-                                  displayStringForOption: (Book option) =>
-                                      option.name!,
-                                  fieldViewBuilder: (BuildContext context,
-                                      TextEditingController
-                                          fieldTextEditingController,
-                                      FocusNode fieldFocusNode,
-                                      VoidCallback onFieldSubmitted) {
-                                    return TextField(
-                                      controller: fieldTextEditingController,
-                                      focusNode: fieldFocusNode,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    );
-                                  },
-                                  onSelected: (Book selection) {
-                                    print('Selected: ${selection.name}');
-                                    setState(() {
-                                      bookId = selection.id!;
-                                      bookName = selection.name!;
-                                    });
-                                  },
-                                  optionsViewBuilder: (BuildContext context,
-                                      AutocompleteOnSelected<Book> onSelected,
-                                      Iterable<Book> options) {
-                                    return Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Material(
-                                        child: Container(
-                                          width: 300,
-                                          color: Colors.grey,
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.all(10.0),
-                                            itemCount: options.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              final Book option =
-                                                  options.elementAt(index);
-
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  onSelected(option);
-                                                },
-                                                child: ListTile(
-                                                  title: Text(option.name!,
-                                                      style: const TextStyle(
-                                                          color: Colors.white)),
-                                                ),
-                                              );
+                      Row(
+                        children: [
+                          Text(readerName.isEmpty
+                              ? 'Pesquise o leitor no botão ao lado'
+                              : readerName),
+                          IconButton(
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Leitor"),
+                                  content: SizedBox(
+                                    width: deviceSize.width - 100,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: deviceSize.width / 2,
+                                              child: TextField(
+                                                controller:
+                                                    filterReaderController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText: 'Pesquisar'),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => setState(() {
+                                                getListReaders =
+                                                    _loadReadersFilter(context);
+                                              }),
+                                              icon: Icon(Icons.search),
+                                            )
+                                          ],
+                                        ),
+                                        Expanded(
+                                          child: FutureBuilder(
+                                            future: getListReaders,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              } else if (snapshot.error !=
+                                                  null) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'Ocorreu um erro!'));
+                                              } else {
+                                                return Consumer<ReaderProvider>(
+                                                  builder:
+                                                      ((ctx, values, child) =>
+                                                          ListView.builder(
+                                                            itemCount:
+                                                                values.count,
+                                                            itemBuilder:
+                                                                ((ctx, index) =>
+                                                                    Column(
+                                                                      children: [
+                                                                        ListTile(
+                                                                          title: Text(values
+                                                                              .readers[index]
+                                                                              .name!),
+                                                                          trailing: values.readers[index].openLoan == false
+                                                                              ? IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(() {
+                                                                                      readerId = values.readers[index].id!;
+                                                                                      readerName = values.readers[index].name!;
+                                                                                    });
+                                                                                    Navigator.of(context).pop();
+                                                                                  },
+                                                                                  icon: const Icon(
+                                                                                    Icons.check_circle_outline,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                )
+                                                                              : const Icon(
+                                                                                  Icons.error_outline,
+                                                                                  color: Colors.red,
+                                                                                ),
+                                                                        ),
+                                                                        const Divider(),
+                                                                      ],
+                                                                    )),
+                                                          )),
+                                                );
+                                              }
                                             },
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          }
-                        },
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            icon: const Icon(Icons.search),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 30),
                       Container(

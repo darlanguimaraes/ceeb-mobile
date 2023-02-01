@@ -9,30 +9,58 @@ class ReaderController {
   Future<List<Reader>> list() async {
     try {
       final readers = await Hive.openBox<Reader>(TableName.reader.name);
-      return readers.values.toList();
+      final listReaders = readers.values.toList();
+      listReaders.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      return listReaders;
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<List<Reader>> find(String name) async {
+  Future<List<Reader>> find(String? name) async {
+    if (name == null || name.isEmpty) {
+      return list();
+    }
     try {
       final readers = await Hive.openBox<Reader>(TableName.reader.name);
-      return readers.values
+      final listReaders = readers.values
           .where((reader) =>
               reader.name!.toLowerCase().contains(name.toLowerCase()))
           .toList();
+      listReaders.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      return listReaders;
     } catch (e) {
       throw Exception(e);
     }
   }
 
   Future<void> persist(Reader reader) async {
+    reader.sync = false;
+    await persistSync(reader);
+  }
+
+  Future<void> persistSync(Reader reader) async {
     final readers = await Hive.openBox<Reader>(TableName.reader.name);
     reader.id ??= uuid.v4();
     reader.updatedAt = DateTime.now();
-    reader.sync = false;
     await readers.put(reader.id, reader);
+  }
+
+  Future<void> clear() async {
+    final readers = await Hive.openBox<Reader>(TableName.reader.name);
+    await readers.clear();
+    await readers.flush();
+  }
+
+  Future<Reader?> findByRemoteId(String id) async {
+    try {
+      final readers = await Hive.openBox<Reader>(TableName.reader.name);
+      return readers.values.firstWhere((element) => element.remoteId == id);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> hasBook(String id, bool openLoan) async {
@@ -53,5 +81,10 @@ class ReaderController {
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+  Future<Reader?> getReader(String id) async {
+    final readers = await Hive.openBox<Reader>(TableName.reader.name);
+    return readers.get(id);
   }
 }

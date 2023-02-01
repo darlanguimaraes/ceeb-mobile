@@ -1,3 +1,5 @@
+import 'package:ceeb_mobile/dto/invoice_dto.dart';
+import 'package:ceeb_mobile/models/category.dart';
 import 'package:ceeb_mobile/models/invoice.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +7,14 @@ import 'package:intl/intl.dart';
 
 class InvoiceListItem extends StatelessWidget {
   final Invoice invoice;
-  const InvoiceListItem(this.invoice, {super.key});
+  final List<Category> categories;
+  const InvoiceListItem(this.invoice, this.categories, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final total = invoice.quantity!.toDouble() * invoice.value!.toDouble();
     final text =
-        'Valor R\$ ${(invoice.quantity ?? 0 * (invoice.value ?? 0)).toStringAsFixed(2)} - Data ${DateFormat('dd/MM/yyyy').format(invoice.date ?? DateTime.now())}';
+        'Valor R\$ ${total.toStringAsFixed(2)} - Data ${DateFormat('dd/MM/yyyy').format(invoice.date ?? DateTime.now())}';
 
     return ListTile(
       title: Text(invoice.category?.name ?? ''),
@@ -20,10 +24,14 @@ class InvoiceListItem extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: () => Navigator.of(context).pushNamed(
-                AppRoutes.invoiceForm,
-                arguments: invoice,
-              ),
+              onPressed: () {
+                final dto = InvoiceDTO(categories);
+                dto.invoice = invoice;
+                Navigator.of(context).pushNamed(
+                  AppRoutes.invoiceForm,
+                  arguments: dto,
+                );
+              },
               icon: const Icon(Icons.edit),
               color: Theme.of(context).primaryColor,
             ),

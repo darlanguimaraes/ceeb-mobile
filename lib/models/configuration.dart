@@ -18,4 +18,7 @@ class Configuration extends HiveObject {
 
   @HiveField(4)
   DateTime? updateAt;
+
+  @HiveField(5)
+  DateTime? sync;
 }

@@ -28,6 +28,9 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
         _formData['phone'] = reader.phone?.toString() ?? '';
         _formData['address'] = reader.address?.toString() ?? '';
         _formData['city'] = reader.city?.toString() ?? '';
+        if (reader.remoteId != null) {
+          _formData['remoteId'] = reader.remoteId!;
+        }
       }
     }
   }
@@ -46,7 +49,11 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
       reader.phone = _formData['phone']?.toString();
       reader.address = _formData['address']?.toString();
       reader.city = _formData['city']?.toString();
+      reader.openLoan = false;
       reader.sync = false;
+      if (_formData['remoteId'] != null) {
+        reader.remoteId = _formData['remoteId'].toString();
+      }
 
       await Provider.of<ReaderProvider>(context, listen: false).persist(reader);
       await showDialog<void>(
@@ -88,7 +95,10 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leitor'),
+        title: const Text(
+          'Leitor',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: _isLoading
           ? const Center(
@@ -97,7 +107,7 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
           : Center(
               child: Container(
                 padding: const EdgeInsets.all(15),
-                width: deviceSize.width > 500 ? 500 : double.infinity,
+                width: deviceSize.width > 600 ? 600 : double.infinity,
                 child: Form(
                   key: _formKey,
                   child: ListView(

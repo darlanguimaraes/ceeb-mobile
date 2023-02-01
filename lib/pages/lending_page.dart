@@ -12,7 +12,10 @@ class LendingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Empréstimos e Devoluções'),
+        title: const Text(
+          'Empréstimos e Devoluções',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
             onPressed: () =>

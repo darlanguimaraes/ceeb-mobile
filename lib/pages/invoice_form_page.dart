@@ -1,3 +1,4 @@
+import 'package:ceeb_mobile/dto/invoice_dto.dart';
 import 'package:ceeb_mobile/models/category.dart';
 import 'package:ceeb_mobile/models/invoice.dart';
 import 'package:ceeb_mobile/providers/category_provider.dart';
@@ -22,7 +23,7 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
 
   TextEditingController dateController = TextEditingController();
 
-  bool _isCredit = false;
+  bool _isCredit = true;
 
   @override
   void initState() {
@@ -33,12 +34,21 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
+    final dto = ModalRoute.of(context)?.settings.arguments as InvoiceDTO;
+    _categories = dto.categories;
 
-    if (_formData.isEmpty) {
-      final arg = ModalRoute.of(context)?.settings.arguments;
-      if (arg != null) {
-        final invoice = arg as Invoice;
-        _formData['id'] = invoice.id.toString();
+    if (dto.invoice != null) {
+      final invoice = dto.invoice!;
+      _formData['id'] = invoice.id.toString();
+      _isCredit = invoice.credit!;
+      _formData['category'] = invoice.category;
+      _formData['categoryId'] = invoice.categoryId;
+      _formData['quantity'] = invoice.quantity.toString();
+      _formData['value'] = invoice.value.toString();
+      _formData['paymentType'] = invoice.paymentType;
+      dateController.text = DateFormat('dd/MM/yyyy').format(invoice.date!);
+      if (invoice.remoteId != null) {
+        _formData['remoteId'] = invoice.remoteId!;
       }
     }
   }
@@ -61,6 +71,9 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
       invoice.date = DateFormat('dd/MM/yyyy').parse(dateController.text);
       invoice.paymentType = _formData['paymentType'].toString();
       invoice.sync = false;
+      if (_formData['remoteId'] != null) {
+        invoice.remoteId = _formData['remoteId'].toString();
+      }
 
       await Provider.of<InvoiceProvider>(context, listen: false)
           .persist(invoice);
@@ -103,7 +116,10 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conta'),
+        title: const Text(
+          'Conta',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -138,44 +154,22 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
                           }
                         },
                       ),
-                      FutureBuilder(
-                        future: Provider.of<CategoryProvider>(context,
-                                listen: false)
-                            .loadCategories(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.error != null) {
-                            return const Center(
-                                child: Text('Ocorreu um erro!'));
-                          } else {
-                            return SizedBox(
-                              height: 56,
-                              child: Consumer<CategoryProvider>(
-                                builder: ((ctx, categories, child) =>
-                                    DropdownButtonFormField<Category>(
-                                      hint: const Text('Categoria'),
-                                      isExpanded: true,
-                                      items: categories.categories.map((e) {
-                                        return DropdownMenuItem(
-                                          value: e,
-                                          child: Text(e.name.toString()),
-                                        );
-                                      }).toList(),
-                                      onSaved: ((newValue) =>
-                                          _formData['category'] = newValue),
-                                      value: _formData['category'],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _formData['category'] = value!;
-                                        });
-                                      },
-                                    )),
-                              ),
-                            );
-                          }
+                      DropdownButtonFormField<Category>(
+                        hint: const Text('Categoria'),
+                        isExpanded: true,
+                        items: _categories.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(e.name.toString()),
+                          );
+                        }).toList(),
+                        onSaved: ((newValue) =>
+                            _formData['category'] = newValue),
+                        value: _formData['category'],
+                        onChanged: (value) {
+                          setState(() {
+                            _formData['category'] = value!;
+                          });
                         },
                       ),
                       TextFormField(
@@ -185,12 +179,14 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
                             decimal: true),
                         onSaved: (quantity) =>
                             _formData['quantity'] = quantity ?? 0,
+                        initialValue: _formData['quantity'],
                       ),
                       TextFormField(
                         decoration: const InputDecoration(labelText: 'Valor'),
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         onSaved: (value) => _formData['value'] = value ?? 0,
+                        initialValue: _formData['value'],
                       ),
                       DropdownButtonFormField<String>(
                         hint: const Text('Tipo de pagamaneto'),

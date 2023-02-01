@@ -12,6 +12,22 @@ class ReaderListItem extends StatelessWidget {
     return ListTile(
       title: Text(reader.name.toString()),
       subtitle: Text(reader.phone?.toString() ?? ''),
+      leading: SizedBox(
+        width: 30,
+        child: Row(
+          children: [
+            reader.openLoan == true
+                ? const Icon(
+                    (Icons.error_outline),
+                    color: Colors.red,
+                  )
+                : const Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                  )
+          ],
+        ),
+      ),
       trailing: SizedBox(
         width: 50,
         child: Row(

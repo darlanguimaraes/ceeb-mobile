@@ -1,6 +1,9 @@
 import 'package:ceeb_mobile/models/lending.dart';
+import 'package:ceeb_mobile/providers/lending_provider.dart';
+import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class LendingReturnPage extends StatefulWidget {
   const LendingReturnPage({super.key});
@@ -20,47 +23,149 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
     if (arg != null) {
       final lending = arg as Lending;
       _lending = lending;
+    } else {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.lending);
+    }
+  }
+
+  Future<void> _submit() async {
+    try {
+      await Provider.of<LendingProvider>(context, listen: false)
+          .returned(_lending);
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('SUCESSO!'),
+          content: const Text('Devolução executada.'),
+          actions: [
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Ocorreu um erro!'),
+          content: const Text('Não foi possível devolver o livro.'),
+          actions: [
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width * 4;
+
+    const styleTitle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    const styleLabel = TextStyle(fontSize: 20);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Devolução'),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(15),
-        child: ListView(
-          children: [
-            Row(
-              children: [
-                Text('Livro'),
-                Text(_lending.bookName!),
-              ],
-            ),
-            Row(
-              children: [
-                const Text('Leitor'),
-                Text(_lending.readerName!),
-              ],
-            ),
-            Row(
-              children: [
-                const Text('Data de retirada'),
-                Text(DateFormat('dd/MM/yyyy')
-                    .format(_lending.date ?? DateTime.now())),
-              ],
-            ),
-            Row(
-              children: [
-                const Text('Data prevista'),
-                Text(DateFormat('dd/MM/yyyy')
-                    .format(_lending.expectedDate ?? DateTime.now())),
-              ],
-            ),
-          ],
+        title: const Text(
+          'Devolução',
+          style: TextStyle(color: Colors.white),
         ),
+      ),
+      body: Column(
+        children: [
+          GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: (itemWidth / itemHeight),
+            controller: ScrollController(keepScrollOffset: false),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.all(10),
+            children: [
+              const Text(
+                'Livro',
+                style: styleTitle,
+              ),
+              Text(
+                _lending.bookName!,
+                style: styleLabel,
+              ),
+              const Text(
+                'Código',
+                style: styleTitle,
+              ),
+              Text(
+                _lending.bookCode!,
+                style: styleLabel,
+              ),
+              const Text(
+                'Leitor',
+                style: styleTitle,
+              ),
+              Text(
+                _lending.readerName!,
+                style: styleLabel,
+              ),
+              const Text(
+                'Data de retirada',
+                style: styleTitle,
+              ),
+              Text(
+                DateFormat('dd/MM/yyyy')
+                    .format(_lending.date ?? DateTime.now()),
+                style: styleLabel,
+              ),
+              const Text(
+                'Data de entrega',
+                style: styleTitle,
+              ),
+              Text(
+                DateFormat('dd/MM/yyyy')
+                    .format(_lending.expectedDate ?? DateTime.now()),
+                style: styleLabel,
+              ),
+              if (_lending.isLate)
+                const Text(
+                  'Entrega em atrso',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+              if (_lending.isLate)
+                Text(
+                  _lending.lateDays.toString(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: _submit,
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 8,
+              ),
+            ),
+            child: const Text('Devolver'),
+          ),
+        ],
       ),
     );
   }

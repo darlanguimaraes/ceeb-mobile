@@ -17,6 +17,15 @@ class ReaderProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadReadersFilter(String? filter) async {
+    _readers.clear();
+
+    final readerController = ReaderController();
+    final readers = await readerController.find(filter);
+    _readers.addAll(readers);
+    notifyListeners();
+  }
+
   Future<void> persist(Reader reader) async {
     final readerController = ReaderController();
     await readerController.persist(reader);

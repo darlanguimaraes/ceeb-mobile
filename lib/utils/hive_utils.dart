@@ -39,5 +39,15 @@ class HiveUtils {
       user.updateAt = DateTime.now();
       await users.put(user.id, user);
     }
+    final configs = await Hive.openBox(TableName.configuration.name);
+    if (configs.values.isEmpty) {
+      final config = Configuration();
+      config.id = uuid.v4();
+      config.lendingDays = 30;
+      config.penaltyValue = 1;
+      config.sync = DateTime.utc(2023, 1, 1, 1, 18, 04);
+      config.updateAt = DateTime.now();
+      await configs.put(config.id, config);
+    }
   }
 }

@@ -33,4 +33,15 @@ class Book extends HiveObject {
 
   @HiveField(10)
   String? remoteId;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'author': author,
+        'writer': writer,
+        'code': code,
+        'edition': edition,
+        'borrow': borrow,
+        'remoteId': remoteId,
+      };
 }

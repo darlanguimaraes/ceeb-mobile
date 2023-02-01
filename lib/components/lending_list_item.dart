@@ -10,7 +10,6 @@ class LendingListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(lending.bookName);
     final text =
         '${lending.readerName} - Data de entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate ?? DateTime.now())}';
 
@@ -21,9 +20,15 @@ class LendingListItem extends StatelessWidget {
         width: 40,
         child: Row(
           children: [
-            Icon(lending.returned!
-                ? Icons.check_circle_outline
-                : Icons.error_outline)
+            lending.returned == true
+                ? const Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                  )
+                : Icon(
+                    Icons.error_outline,
+                    color: lending.isLate ? Colors.red : Colors.amber,
+                  ),
           ],
         ),
       ),
@@ -31,14 +36,19 @@ class LendingListItem extends StatelessWidget {
         width: 50,
         child: Row(
           children: [
-            IconButton(
-              onPressed: () => Navigator.of(context).pushNamed(
-                AppRoutes.lendingReturn,
-                arguments: lending,
-              ),
-              icon: const Icon(Icons.arrow_circle_left_outlined),
-              color: Theme.of(context).primaryColor,
-            ),
+            lending.returned == true
+                ? const Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  )
+                : IconButton(
+                    onPressed: () => Navigator.of(context).pushNamed(
+                      AppRoutes.lendingReturn,
+                      arguments: lending,
+                    ),
+                    icon: const Icon(Icons.arrow_circle_left_outlined),
+                    color: Theme.of(context).primaryColor,
+                  ),
           ],
         ),
       ),

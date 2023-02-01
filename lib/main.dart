@@ -2,6 +2,7 @@ import 'package:ceeb_mobile/pages/book_form_page.dart';
 import 'package:ceeb_mobile/pages/books_page.dart';
 import 'package:ceeb_mobile/pages/categories_page.dart';
 import 'package:ceeb_mobile/pages/category_form_page.dart';
+import 'package:ceeb_mobile/pages/home_page.dart';
 import 'package:ceeb_mobile/pages/invoice_form_page.dart';
 import 'package:ceeb_mobile/pages/invoices_page.dart';
 import 'package:ceeb_mobile/pages/lending_form_page.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         routes: {
+          AppRoutes.home: (ctx) => const HomePage(),
           AppRoutes.login: (ctx) => const LoginOrHomePage(),
           AppRoutes.categories: (ctx) => const CategoriesPage(),
           AppRoutes.categoryForm: (ctx) => const CategoryForm(),

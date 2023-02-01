@@ -1,5 +1,7 @@
 import 'package:ceeb_mobile/components/app_drawer.dart';
 import 'package:ceeb_mobile/components/invoice_list_item.dart';
+import 'package:ceeb_mobile/dto/invoice_dto.dart';
+import 'package:ceeb_mobile/providers/category_provider.dart';
 import 'package:ceeb_mobile/providers/invoice_provider.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -10,21 +12,35 @@ class Invoices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> load() async {
+      Provider.of<InvoiceProvider>(context, listen: false).loadInvoices();
+      Provider.of<CategoryProvider>(context, listen: false).loadCategories();
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contas'),
+        title: const Text(
+          'Contas',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AppRoutes.invoiceForm),
+            onPressed: () {
+              final invoiceDTO = InvoiceDTO(
+                  Provider.of<CategoryProvider>(context, listen: false)
+                      .categories);
+              Navigator.of(context).pushNamed(
+                AppRoutes.invoiceForm,
+                arguments: invoiceDTO,
+              );
+            },
             icon: const Icon(Icons.add),
           ),
         ],
       ),
       drawer: const AppDrawer(),
       body: FutureBuilder(
-        future:
-            Provider.of<InvoiceProvider>(context, listen: false).loadInvoices(),
+        future: load(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -36,7 +52,11 @@ class Invoices extends StatelessWidget {
                     itemCount: invoice.count,
                     itemBuilder: ((ctx, index) => Column(
                           children: [
-                            InvoiceListItem(invoice.invoices[index]),
+                            InvoiceListItem(
+                                invoice.invoices[index],
+                                Provider.of<CategoryProvider>(context,
+                                        listen: false)
+                                    .categories),
                             const Divider(),
                           ],
                         )),

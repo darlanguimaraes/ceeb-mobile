@@ -18,4 +18,10 @@ class Category extends HiveObject {
 
   @HiveField(4)
   DateTime? updatedAt;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'remoteId': remoteId,
+      };
 }

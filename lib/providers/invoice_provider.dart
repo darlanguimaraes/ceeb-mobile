@@ -13,6 +13,7 @@ class InvoiceProvider with ChangeNotifier {
 
     final invoiceController = InvoiceController();
     final invoices = await invoiceController.list();
+    invoices.sort((a, b) => a.date!.compareTo(b.date!));
     _invoices.addAll(invoices);
 
     notifyListeners();

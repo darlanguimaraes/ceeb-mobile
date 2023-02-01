@@ -40,4 +40,16 @@ class Invoice extends HiveObject {
 
   @HiveField(11)
   String? remoteId;
+
+  Map<String, dynamic> toJson(String remoteCategoryId) => {
+        "id": id,
+        "date": date!.toIso8601String(),
+        "quantity": quantity,
+        "value": value,
+        "credit": credit,
+        "paymentType": paymentType,
+        "categoryId": remoteCategoryId,
+        "lendingId": lendingId,
+        "remoteId": remoteId,
+      };
 }

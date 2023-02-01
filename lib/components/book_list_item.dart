@@ -11,7 +11,23 @@ class BookListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(book.name.toString()),
-      subtitle: Text(book.author.toString()),
+      subtitle: Text('${book.author!} - ${book.code}'),
+      leading: SizedBox(
+        width: 30,
+        child: Row(
+          children: [
+            book.borrow == true
+                ? const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                  )
+                : const Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.green,
+                  )
+          ],
+        ),
+      ),
       trailing: SizedBox(
         width: 50,
         child: Row(

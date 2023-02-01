@@ -12,8 +12,16 @@ class BookProvider with ChangeNotifier {
     _books.clear();
 
     final bookController = BookController();
-    final categories = await bookController.list();
-    _books.addAll(categories);
+    final books = await bookController.list();
+    _books.addAll(books);
+    notifyListeners();
+  }
+
+  Future<void> loadBooksFilter(String filter) async {
+    _books.clear();
+    final bookController = BookController();
+    final books = await bookController.find(filter);
+    _books.addAll(books);
     notifyListeners();
   }
 

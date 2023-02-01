@@ -29,6 +29,9 @@ class _BookFormPageState extends State<BookFormPage> {
         _formData['writer'] = book.writer.toString();
         _formData['code'] = book.code.toString();
         _formData['edition'] = book.edition.toString();
+        if (book.remoteId != null) {
+          _formData['remoteId'] = book.remoteId!;
+        }
       }
     }
   }
@@ -50,6 +53,9 @@ class _BookFormPageState extends State<BookFormPage> {
       book.edition = _formData['edition']?.toString();
       book.borrow = false;
       book.sync = false;
+      if (_formData['remoteId'] != null) {
+        book.remoteId = _formData['remoteId'].toString();
+      }
 
       await Provider.of<BookProvider>(context, listen: false).persist(book);
       await showDialog<void>(
@@ -88,16 +94,21 @@ class _BookFormPageState extends State<BookFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Livro'),
+        title: const Text(
+          'Livro',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
+          : Container(
               padding: const EdgeInsets.all(15),
+              width: deviceSize.width > 600 ? 600 : double.infinity,
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -145,9 +156,9 @@ class _BookFormPageState extends State<BookFormPage> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _formData['author']?.toString(),
+                      initialValue: _formData['writer']?.toString(),
                       decoration: const InputDecoration(labelText: 'Escritor'),
-                      onSaved: (author) => _formData['author'] = author ?? '',
+                      onSaved: (writer) => _formData['writer'] = writer ?? '',
                     ),
                     const SizedBox(height: 30),
                     Container(

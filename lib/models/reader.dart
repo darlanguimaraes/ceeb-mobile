@@ -33,4 +33,15 @@ class Reader extends HiveObject {
 
   @HiveField(9)
   String? remoteId;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'phone': phone,
+        'address': address,
+        'city': city,
+        'email': email,
+        "openLoan": openLoan,
+        "remoteId": remoteId,
+      };
 }

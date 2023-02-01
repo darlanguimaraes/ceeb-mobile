@@ -13,13 +13,14 @@ class CategoryProvider with ChangeNotifier {
 
     final categoryController = CategoryController();
     final categories = await categoryController.list();
+    categories.sort((a, b) => a.name!.compareTo(b.name!));
     _categories.addAll(categories);
     notifyListeners();
   }
 
   Future<void> persist(Category category) async {
     final categoryController = CategoryController();
-    await categoryController.persist(category);
+    await categoryController.persist(category, false);
     await loadCategories();
   }
 }

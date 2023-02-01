@@ -25,6 +25,9 @@ class _CategoryFormState extends State<CategoryForm> {
         final category = arg as Category;
         _formData['id'] = category.id.toString();
         _formData['name'] = category.name.toString();
+        if (category.remoteId != null) {
+          _formData['remoteId'] = category.remoteId!;
+        }
       }
     }
   }
@@ -40,6 +43,9 @@ class _CategoryFormState extends State<CategoryForm> {
       final category = Category();
       category.id = _formData['id']?.toString();
       category.name = _formData['name'].toString();
+      if (_formData['remoteId'] != null) {
+        category.remoteId = _formData['remoteId'].toString();
+      }
       category.sync = false;
 
       await Provider.of<CategoryProvider>(context, listen: false)
@@ -80,56 +86,63 @@ class _CategoryFormState extends State<CategoryForm> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Categoria'),
+        title: const Text(
+          'Categoria',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(15),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: [
-                    TextFormField(
-                      initialValue: _formData['name']?.toString(),
-                      decoration: const InputDecoration(labelText: 'Nome'),
-                      // textInputAction: TextInputAction.done,
-                      onSaved: (name) => _formData['name'] = name ?? '',
-                      validator: (value) {
-                        final name = value ?? '';
-                        if (name.trim().isEmpty) {
-                          return 'Nome é obrigatório';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Align(
-                        child: SizedBox(
-                          width: 150,
-                          child: ElevatedButton(
-                            onPressed: _submitForm,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+          : Center(
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                width: deviceSize.width > 600 ? 600 : double.infinity,
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        initialValue: _formData['name']?.toString(),
+                        decoration: const InputDecoration(labelText: 'Nome'),
+                        // textInputAction: TextInputAction.done,
+                        onSaved: (name) => _formData['name'] = name ?? '',
+                        validator: (value) {
+                          final name = value ?? '';
+                          if (name.trim().isEmpty) {
+                            return 'Nome é obrigatório';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Align(
+                          child: SizedBox(
+                            width: 150,
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 8,
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 8,
-                              ),
+                              child: const Text('Salvar'),
                             ),
-                            child: const Text('Salvar'),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
