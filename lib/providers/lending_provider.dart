@@ -13,6 +13,17 @@ class LendingProvider with ChangeNotifier {
 
     final lendingController = LendingController();
     final lendings = await lendingController.list();
+    lendings.sort((b, a) => a.date!.compareTo(b.date!));
+    _lendings.addAll(lendings);
+    notifyListeners();
+  }
+
+  Future<void> loadLendingsFilter(bool open) async {
+    _lendings.clear();
+
+    final lendingController = LendingController();
+    final lendings = await lendingController.listFilter(open);
+    lendings.sort((b, a) => a.date!.compareTo(b.date!));
     _lendings.addAll(lendings);
     notifyListeners();
   }

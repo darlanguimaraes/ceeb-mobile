@@ -34,6 +34,7 @@ class _ReadersPageState extends State<ReadersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -49,51 +50,54 @@ class _ReadersPageState extends State<ReadersPage> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                SizedBox(
-                  width: 250,
-                  child: TextField(
-                    controller: filterController,
-                    decoration: const InputDecoration(labelText: 'Pesquisar'),
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          width: deviceSize.width > 700 ? 700 : double.infinity,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    width: 250,
+                    child: TextField(
+                      controller: filterController,
+                      decoration: const InputDecoration(labelText: 'Pesquisar'),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                    onPressed: () => setState(() {
-                          getList = _loadReaders(context);
-                        }),
-                    child: const Text('Pesquisar'))
-              ],
-            ),
-            Expanded(
-              child: FutureBuilder(
-                future: getList,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.error != null) {
-                    return const Center(child: Text('Ocorreu um erro!'));
-                  } else {
-                    return Consumer<ReaderProvider>(
-                      builder: ((ctx, readers, child) => ListView.builder(
-                            itemCount: readers.count,
-                            itemBuilder: ((ctx, index) => Column(
-                                  children: [
-                                    ReaderListItem(readers.readers[index]),
-                                    const Divider(),
-                                  ],
-                                )),
-                          )),
-                    );
-                  }
-                },
+                  ElevatedButton(
+                      onPressed: () => setState(() {
+                            getList = _loadReaders(context);
+                          }),
+                      child: const Text('Pesquisar'))
+                ],
               ),
-            ),
-          ],
+              Expanded(
+                child: FutureBuilder(
+                  future: getList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.error != null) {
+                      return const Center(child: Text('Ocorreu um erro!'));
+                    } else {
+                      return Consumer<ReaderProvider>(
+                        builder: ((ctx, readers, child) => ListView.builder(
+                              itemCount: readers.count,
+                              itemBuilder: ((ctx, index) => Column(
+                                    children: [
+                                      ReaderListItem(readers.readers[index]),
+                                      const Divider(),
+                                    ],
+                                  )),
+                            )),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

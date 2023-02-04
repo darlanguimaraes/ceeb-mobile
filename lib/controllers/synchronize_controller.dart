@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:ceeb_mobile/controllers/book_controller.dart';
 import 'package:ceeb_mobile/controllers/category_controller.dart';
@@ -16,25 +15,48 @@ import 'package:http/http.dart' as http;
 
 class SynchronizeController {
   final uuid = Uuid();
-  // final baseUrl = 'https://ceeb-admin.vercel.app/api/synchronize';
-  final baseUrl = 'http://192.168.1.6:3000/api/synchronize';
+  //final baseUrl/synchronize = 'https://ceeb-admin.vercel.app/api';
+  final baseUrl = 'http://192.168.1.6:3000/api';
 
-  Future<String> synchronize() async {
+  Future<String> synchronize(String username, String password) async {
     try {
-      await syncCategories();
-      await syncReaders();
-      await syncBooks();
-      await syncInvoice();
-      await syncLending();
+      final token = await login(username, password);
+      await syncCategories(token);
+      await syncReaders(token);
+      await syncBooks(token);
+      await syncInvoice(token);
+      await syncLending(token);
 
       return 'Dados sincronizados!';
     } catch (e) {
       print(e);
-      return 'Erro ao sincronizar os dados';
+      return 'Erro ao sincronizar os dados: $e';
     }
   }
 
-  Future<void> syncBooks() async {
+  Future<String> login(String username, String password) async {
+    final Map body = {
+      "username": username,
+      "password": password,
+    };
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/user'),
+        body: body,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Erro ao realizar o login');
+      }
+
+      final data = jsonDecode(response.body);
+      return data['token'];
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> syncBooks(String token) async {
     final bookController = BookController();
     final books = await bookController.listForSynchronize();
     if (books.isNotEmpty) {
@@ -42,7 +64,7 @@ class SynchronizeController {
       final body = json.encoder.convert(dataBooks);
 
       final responseNewData = await http.post(
-        Uri.parse('$baseUrl/books'),
+        Uri.parse('$baseUrl/synchronize/books?auth=$token'),
         body: body,
       );
       final newData = jsonDecode(responseNewData.body);
@@ -56,7 +78,8 @@ class SynchronizeController {
       }
     }
 
-    final resp = await http.get(Uri.parse('$baseUrl/books'));
+    final resp =
+        await http.get(Uri.parse('$baseUrl/synchronize/books?auth=$token'));
     final data = jsonDecode(resp.body);
     final List listBooks = data['books'];
     if (listBooks.isNotEmpty) {
@@ -76,7 +99,7 @@ class SynchronizeController {
     }
   }
 
-  Future<void> syncReaders() async {
+  Future<void> syncReaders(String token) async {
     final readerController = ReaderController();
     final readers = await readerController.listForSynchronize();
     if (readers.isNotEmpty) {
@@ -84,7 +107,7 @@ class SynchronizeController {
       final body = json.encoder.convert(dataReaders);
 
       final responseNewData = await http.post(
-        Uri.parse('$baseUrl/readers'),
+        Uri.parse('$baseUrl/synchronize/readers?auth=$token'),
         body: body,
       );
       final newData = jsonDecode(responseNewData.body);
@@ -98,7 +121,8 @@ class SynchronizeController {
       }
     }
 
-    final resp = await http.get(Uri.parse('$baseUrl/readers'));
+    final resp =
+        await http.get(Uri.parse('$baseUrl/synchronize/readers?auth=$token'));
     final data = jsonDecode(resp.body);
     final List listReaders = data['readers'];
     if (listReaders.isNotEmpty) {
@@ -118,15 +142,16 @@ class SynchronizeController {
     }
   }
 
-  Future<void> syncCategories() async {
+  Future<void> syncCategories(String token) async {
     final categoryController = CategoryController();
     final categories = await categoryController.listForSynchronize();
+
     if (categories.isNotEmpty) {
       final dataCategories = categories.map((e) => e.toJson()).toList();
       final body = json.encoder.convert(dataCategories);
 
       final responseNewData = await http.post(
-        Uri.parse('$baseUrl/categories'),
+        Uri.parse('$baseUrl/synchronize/categories?auth=$token'),
         body: body,
       );
       final newData = jsonDecode(responseNewData.body);
@@ -139,8 +164,9 @@ class SynchronizeController {
         }
       }
     }
-
-    final resp = await http.get(Uri.parse('$baseUrl/categories'));
+    final resp = await http.get(
+      Uri.parse('$baseUrl/synchronize/categories?auth=$token'),
+    );
     final data = jsonDecode(resp.body);
     final List listCat = data['categories'];
     if (listCat.isNotEmpty) {
@@ -155,7 +181,7 @@ class SynchronizeController {
     }
   }
 
-  Future<void> syncInvoice() async {
+  Future<void> syncInvoice(String token) async {
     final invoiceController = InvoiceController();
     final categoryController = CategoryController();
     final invoices = await invoiceController.listForSynchronize();
@@ -168,7 +194,7 @@ class SynchronizeController {
       final body = json.encoder.convert(temp);
 
       final responseNewData = await http.post(
-        Uri.parse('$baseUrl/invoices'),
+        Uri.parse('$baseUrl/synchronize/invoices?auth=$token'),
         body: body,
       );
       final newData = jsonDecode(responseNewData.body);
@@ -182,7 +208,8 @@ class SynchronizeController {
       }
     }
 
-    final resp = await http.get(Uri.parse('$baseUrl/invoices'));
+    final resp =
+        await http.get(Uri.parse('$baseUrl/synchronize/invoices?auth=$token'));
     final data = jsonDecode(resp.body);
     final List listInvoices = data['invoices'];
     if (listInvoices.isNotEmpty) {
@@ -201,7 +228,7 @@ class SynchronizeController {
         invoice.lendingId = element['lendingId'];
         invoice.paymentType = element['paymentType'];
         invoice.quantity = double.tryParse(element['quantity']);
-        invoice.remoteId = element['remoteId'];
+        invoice.remoteId = element['id'];
         invoice.value = double.tryParse(element['value']);
         invoice.sync = true;
         await invoiceController.persistSync(invoice);
@@ -209,7 +236,7 @@ class SynchronizeController {
     }
   }
 
-  Future<void> syncLending() async {
+  Future<void> syncLending(String token) async {
     final lendingController = LendingController();
     final bookController = BookController();
     final readerController = ReaderController();
@@ -224,7 +251,7 @@ class SynchronizeController {
       final body = json.encoder.convert(listLendings);
 
       final responseNewData = await http.post(
-        Uri.parse('$baseUrl/lendings'),
+        Uri.parse('$baseUrl/synchronize/lendings?auth=$token'),
         body: body,
       );
       final newData = jsonDecode(responseNewData.body);
@@ -238,7 +265,8 @@ class SynchronizeController {
       }
     }
 
-    final resp = await http.get(Uri.parse('$baseUrl/lendings'));
+    final resp =
+        await http.get(Uri.parse('$baseUrl/synchronize/lendings?auth=$token'));
     final data = jsonDecode(resp.body);
     final List listLendings = data['lendings'];
     if (listLendings.isNotEmpty) {

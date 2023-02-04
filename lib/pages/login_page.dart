@@ -32,8 +32,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _submitForm() async {
-    final _isValid = _formKey.currentState?.validate() ?? false;
-    if (!_isValid) return;
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) return;
 
     _formKey.currentState?.save();
     setState(() => _isLoading = true);
@@ -59,92 +59,94 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Center(
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              width: deviceSize.width > 500 ? 500 : double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Casa Espírita Euripedes Barsanulpho',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontFamily: 'Cookie',
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                width: deviceSize.width > 500 ? 500 : double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Casa Espírita Euripedes Barsanulpho',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontFamily: 'Cookie',
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Image.asset(
-                    'assets/images/euripedes.png',
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-                  Card(
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    Image.asset(
+                      'assets/images/euripedes.png',
+                      width: 100,
+                      fit: BoxFit.cover,
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      width: deviceSize.width * 0.75,
-                      height: 250,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              initialValue: _formData['username']?.toString(),
-                              decoration: const InputDecoration(
-                                  labelText: 'Nome de usuário'),
-                              textInputAction: TextInputAction.next,
-                              onSaved: (username) =>
-                                  _formData['username'] = username ?? '',
-                              validator: (_name) {
-                                final name = _name ?? '';
-                                if (name.trim().isEmpty) {
-                                  return 'Digite o nome de usuário.';
-                                }
-                                return null;
-                              },
-                            ),
-                            TextFormField(
-                              decoration:
-                                  const InputDecoration(labelText: 'Senha'),
-                              obscureText: true,
-                              onSaved: (password) =>
-                                  _formData['password'] = password ?? '',
-                              validator: (_password) {
-                                final password = _password ?? '';
-                                if (password.trim().isEmpty ||
-                                    password.length < 5) {
-                                  return 'Senha inválida';
-                                }
-                                return null;
-                              },
-                            ),
-                            const Spacer(),
-                            if (_isLoading)
-                              const CircularProgressIndicator()
-                            else
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical: 8,
-                                  ),
-                                ),
-                                onPressed: _submitForm,
-                                child: const Text('Entrar'),
+                    Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        width: deviceSize.width * 0.75,
+                        height: 250,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                initialValue: _formData['username']?.toString(),
+                                decoration: const InputDecoration(
+                                    labelText: 'Nome de usuário'),
+                                textInputAction: TextInputAction.next,
+                                onSaved: (username) =>
+                                    _formData['username'] = username ?? '',
+                                validator: (_name) {
+                                  final name = _name ?? '';
+                                  if (name.trim().isEmpty) {
+                                    return 'Digite o nome de usuário.';
+                                  }
+                                  return null;
+                                },
                               ),
-                          ],
+                              TextFormField(
+                                decoration:
+                                    const InputDecoration(labelText: 'Senha'),
+                                obscureText: true,
+                                onSaved: (password) =>
+                                    _formData['password'] = password ?? '',
+                                validator: (_password) {
+                                  final password = _password ?? '';
+                                  if (password.trim().isEmpty ||
+                                      password.length < 5) {
+                                    return 'Senha inválida';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const Spacer(),
+                              if (_isLoading)
+                                const CircularProgressIndicator()
+                              else
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                  onPressed: _submitForm,
+                                  child: const Text('Entrar'),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

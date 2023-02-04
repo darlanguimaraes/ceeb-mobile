@@ -10,6 +10,7 @@ class CategoriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -25,28 +26,34 @@ class CategoriesPage extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: FutureBuilder(
-        future: Provider.of<CategoryProvider>(context, listen: false)
-            .loadCategories(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.error != null) {
-            return const Center(child: Text('Ocorreu um erro!'));
-          } else {
-            return Consumer<CategoryProvider>(
-              builder: ((ctx, categories, child) => ListView.builder(
-                    itemCount: categories.count,
-                    itemBuilder: ((ctx, index) => Column(
-                          children: [
-                            CategoryListItem(categories.categories[index]),
-                            const Divider(),
-                          ],
-                        )),
-                  )),
-            );
-          }
-        },
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          width: deviceSize.width > 700 ? 700 : double.infinity,
+          child: FutureBuilder(
+            future: Provider.of<CategoryProvider>(context, listen: false)
+                .loadCategories(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.error != null) {
+                return const Center(child: Text('Ocorreu um erro!'));
+              } else {
+                return Consumer<CategoryProvider>(
+                  builder: ((ctx, categories, child) => ListView.builder(
+                        itemCount: categories.count,
+                        itemBuilder: ((ctx, index) => Column(
+                              children: [
+                                CategoryListItem(categories.categories[index]),
+                                const Divider(),
+                              ],
+                            )),
+                      )),
+                );
+              }
+            },
+          ),
+        ),
       ),
     );
   }

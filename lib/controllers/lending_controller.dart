@@ -28,6 +28,22 @@ class LendingController {
     }
   }
 
+  Future<List<Lending>> listFilter(bool open) async {
+    try {
+      final lendings = await Hive.openBox<Lending>(TableName.lending.name);
+      if (!open) {
+        return lendings.values.toList();
+      } else {
+        return lendings.values
+            .where((lending) => lending.returned == false)
+            .toList();
+      }
+    } catch (e) {
+      print(e);
+      throw (Exception(e));
+    }
+  }
+
   Future<void> persist(Lending lending) async {
     lending.sync = false;
     await persistSync(lending);

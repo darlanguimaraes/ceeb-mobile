@@ -1,5 +1,7 @@
+import 'package:ceeb_mobile/providers/auth_provider.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -75,7 +77,10 @@ class AppDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Sair'),
-              onTap: () {},
+              onTap: () {
+                Provider.of<AuthProvider>(context, listen: false).logout();
+                Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+              },
             ),
             const Divider(),
           ],

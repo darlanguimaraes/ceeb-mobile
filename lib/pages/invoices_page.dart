@@ -12,6 +12,7 @@ class Invoices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     Future<void> load() async {
       Provider.of<InvoiceProvider>(context, listen: false).loadInvoices();
       Provider.of<CategoryProvider>(context, listen: false).loadCategories();
@@ -39,31 +40,37 @@ class Invoices extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: FutureBuilder(
-        future: load(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.error != null) {
-            return const Center(child: Text('Ocorreu um erro!'));
-          } else {
-            return Consumer<InvoiceProvider>(
-              builder: ((ctx, invoice, child) => ListView.builder(
-                    itemCount: invoice.count,
-                    itemBuilder: ((ctx, index) => Column(
-                          children: [
-                            InvoiceListItem(
-                                invoice.invoices[index],
-                                Provider.of<CategoryProvider>(context,
-                                        listen: false)
-                                    .categories),
-                            const Divider(),
-                          ],
-                        )),
-                  )),
-            );
-          }
-        },
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          width: deviceSize.width > 700 ? 700 : double.infinity,
+          child: FutureBuilder(
+            future: load(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.error != null) {
+                return const Center(child: Text('Ocorreu um erro!'));
+              } else {
+                return Consumer<InvoiceProvider>(
+                  builder: ((ctx, invoice, child) => ListView.builder(
+                        itemCount: invoice.count,
+                        itemBuilder: ((ctx, index) => Column(
+                              children: [
+                                InvoiceListItem(
+                                    invoice.invoices[index],
+                                    Provider.of<CategoryProvider>(context,
+                                            listen: false)
+                                        .categories),
+                                const Divider(),
+                              ],
+                            )),
+                      )),
+                );
+              }
+            },
+          ),
+        ),
       ),
     );
   }

@@ -34,6 +34,7 @@ class _BooksPageState extends State<BooksPage> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -50,8 +51,9 @@ class _BooksPageState extends State<BooksPage> {
       ),
       drawer: const AppDrawer(),
       body: Center(
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(10),
+          width: deviceSize.width > 700 ? 700 : double.infinity,
           child: Column(
             children: [
               Row(

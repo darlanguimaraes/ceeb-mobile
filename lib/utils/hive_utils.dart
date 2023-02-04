@@ -8,6 +8,7 @@ import 'package:ceeb_mobile/models/user.dart';
 import 'package:ceeb_mobile/utils/enum_table_name.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:dbcrypt/dbcrypt.dart';
 
 class HiveUtils {
   final uuid = Uuid();
@@ -27,15 +28,16 @@ class HiveUtils {
   }
 
   Future<void> _initializeUser() async {
-    final users = await Hive.openBox(TableName.user.name);
+    final users = await Hive.openBox<User>(TableName.user.name);
     if (users.values.isEmpty) {
       final user = User();
       user.id = uuid.v4();
-      user.token = 'abcdef';
-      user.name = 'user';
-      user.username = 'user';
-      user.email = 'user@email.com';
-      user.password = '123456';
+      user.token = 'token';
+      user.name = 'ceeb';
+      user.username = 'ceeb';
+      user.email = 'ceeb@email.com';
+      user.password =
+          new DBCrypt().hashpw('ceebceeb', new DBCrypt().gensaltWithRounds(8));
       user.updateAt = DateTime.now();
       await users.put(user.id, user);
     }

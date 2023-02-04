@@ -8,8 +8,8 @@ class AuthProvider with ChangeNotifier {
   String? _password;
 
   bool get isAuth {
-    // return _token != null ? true : false;
-    return true;
+    return _token != null ? true : false;
+    // return true;
   }
 
   String? get token {
@@ -36,6 +36,11 @@ class AuthProvider with ChangeNotifier {
     _name = user.name;
     _username = user.username;
 
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    _token = null;
     notifyListeners();
   }
 }
