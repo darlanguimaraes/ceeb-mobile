@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 class LendingListItem extends StatelessWidget {
   final Lending lending;
+  final bool showTrailing;
 
-  const LendingListItem(this.lending, {super.key});
+  const LendingListItem(this.lending, this.showTrailing, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,26 +33,28 @@ class LendingListItem extends StatelessWidget {
           ],
         ),
       ),
-      trailing: SizedBox(
-        width: 50,
-        child: Row(
-          children: [
-            lending.returned == true
-                ? const Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  )
-                : IconButton(
-                    onPressed: () => Navigator.of(context).pushNamed(
-                      AppRoutes.lendingReturn,
-                      arguments: lending,
-                    ),
-                    icon: const Icon(Icons.arrow_circle_left_outlined),
-                    color: Theme.of(context).primaryColor,
-                  ),
-          ],
-        ),
-      ),
+      trailing: showTrailing
+          ? SizedBox(
+              width: 50,
+              child: Row(
+                children: [
+                  lending.returned == true
+                      ? const Icon(
+                          Icons.check,
+                          color: Colors.green,
+                        )
+                      : IconButton(
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            AppRoutes.lendingReturn,
+                            arguments: lending,
+                          ),
+                          icon: const Icon(Icons.arrow_circle_left_outlined),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                ],
+              ),
+            )
+          : const SizedBox(width: 10),
     );
   }
 }

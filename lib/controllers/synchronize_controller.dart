@@ -15,8 +15,8 @@ import 'package:http/http.dart' as http;
 
 class SynchronizeController {
   final uuid = Uuid();
-  //final baseUrl/synchronize = 'https://ceeb-admin.vercel.app/api';
-  final baseUrl = 'http://192.168.1.6:3000/api';
+  final baseUrl = 'https://ceeb-admin.vercel.app/api';
+  // final baseUrl = 'http://192.168.1.6:3000/api';
 
   Future<String> synchronize(String username, String password) async {
     try {
@@ -298,7 +298,7 @@ class SynchronizeController {
         lending.returned = element['returned'];
         lending.remoteId = element['id'];
         lending.sync = true;
-        await lendingController.persist(lending);
+        await lendingController.persistSync(lending);
       }
     }
   }

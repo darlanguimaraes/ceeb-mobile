@@ -1,3 +1,4 @@
+import 'package:ceeb_mobile/components/dialog.dart';
 import 'package:ceeb_mobile/models/reader.dart';
 import 'package:ceeb_mobile/providers/reader_provider.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
     }
   }
 
-  Future<void> _submitForm() async {
+  Future<void> _submitForm(BuildContext context) async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
@@ -56,35 +57,12 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
       }
 
       await Provider.of<ReaderProvider>(context, listen: false).persist(reader);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('SUCESSO!'),
-          content: const Text('Leitor Registrado.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(context, 'SUCESSO!', 'Leitor registrado');
       Navigator.of(context).pop();
     } catch (e) {
       print(e);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Ocorreu um erro!'),
-          content: const Text('Ocorreu um erro para salvar o leitor.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(
+          context, 'Ocorreu um erro!', 'Não foi possível salvar o registro');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -149,7 +127,7 @@ class _ReaderFormPageState extends State<ReaderFormPage> {
                           child: SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed: _submitForm,
+                              onPressed: () => _submitForm(context),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),

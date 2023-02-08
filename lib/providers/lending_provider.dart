@@ -1,4 +1,5 @@
 import 'package:ceeb_mobile/controllers/lending_controller.dart';
+import 'package:ceeb_mobile/dto/report_lending_dto.dart';
 import 'package:ceeb_mobile/models/lending.dart';
 import 'package:flutter/material.dart';
 
@@ -38,5 +39,15 @@ class LendingProvider with ChangeNotifier {
     final lendingController = LendingController();
     await lendingController.returnBook(lending);
     await loadLendings();
+  }
+
+  Future<ReportLending> getReport() async {
+    final lendingController = LendingController();
+    final lendings = await lendingController.listFilter(true);
+
+    final lateLendings = lendings.where((element) => element.isLate).toList();
+    final report =
+        ReportLending(lendings.length, lateLendings.length, lateLendings);
+    return report;
   }
 }

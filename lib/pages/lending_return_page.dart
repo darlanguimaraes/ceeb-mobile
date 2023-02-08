@@ -1,3 +1,4 @@
+import 'package:ceeb_mobile/components/dialog.dart';
 import 'package:ceeb_mobile/models/lending.dart';
 import 'package:ceeb_mobile/providers/lending_provider.dart';
 import 'package:ceeb_mobile/utils/app_routes.dart';
@@ -32,34 +33,28 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
     try {
       await Provider.of<LendingProvider>(context, listen: false)
           .returned(_lending);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('SUCESSO!'),
-          content: const Text('Devolução executada.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(context, 'SUCESSO!', 'Devolução executada.');
       Navigator.of(context).pop();
     } catch (e) {
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Ocorreu um erro!'),
-          content: const Text('Não foi possível devolver o livro.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(
+          context, 'Ocorreu um erro!', 'Não foi possível devolver o livro.');
+    }
+  }
+
+  Future<void> _renew(BuildContext context) async {
+    try {
+      DateTime newDeliveryDate =
+          _lending.expectedDate!.add(const Duration(days: 30));
+      _lending.expectedDate = newDeliveryDate;
+      _lending.sync = false;
+      await Provider.of<LendingProvider>(context, listen: false)
+          .borrow(_lending);
+      await Dialogs.showMyDialog(context, 'Livro renovado!',
+          'Nova data de entrega: ${DateFormat('dd/MM/yyyy').format(newDeliveryDate)}.');
+      Navigator.of(context).pop();
+    } catch (e) {
+      await Dialogs.showMyDialog(
+          context, 'Ocorreu um erro!', 'Não foi possível renovar o livro.');
     }
   }
 
@@ -152,18 +147,37 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
                 ),
             ],
           ),
-          ElevatedButton(
-            onPressed: _submit,
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              if (!_lending.isLate)
+                ElevatedButton(
+                  onPressed: () => _renew(context),
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 8,
+                      ),
+                      backgroundColor: Colors.amber),
+                  child: const Text('Renovar'),
+                ),
+              ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 8,
+                  ),
+                ),
+                child: const Text('Devolver'),
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 8,
-              ),
-            ),
-            child: const Text('Devolver'),
+            ],
           ),
         ],
       ),

@@ -1,7 +1,6 @@
-import 'package:ceeb_mobile/controllers/reader_controller.dart';
+import 'package:ceeb_mobile/components/dialog.dart';
 import 'package:ceeb_mobile/models/book.dart';
 import 'package:ceeb_mobile/models/lending.dart';
-import 'package:ceeb_mobile/models/reader.dart';
 import 'package:ceeb_mobile/providers/book_provider.dart';
 import 'package:ceeb_mobile/providers/lending_provider.dart';
 import 'package:ceeb_mobile/providers/reader_provider.dart';
@@ -56,7 +55,7 @@ class _LendingFormPageState extends State<LendingFormPage> {
       Provider.of<ReaderProvider>(context, listen: false)
           .loadReadersFilter(filterReaderController.text);
 
-  Future<void> _submitForm() async {
+  Future<void> _submitForm(BuildContext context) async {
     _formKey.currentState?.save();
     setState(() => _isLoading = true);
 
@@ -76,35 +75,12 @@ class _LendingFormPageState extends State<LendingFormPage> {
 
       await Provider.of<LendingProvider>(context, listen: false)
           .borrow(lending);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('SUCESSO!'),
-          content: Text(
-              'Data de Entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate ?? DateTime.now())}'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(context, 'SUCESSO',
+          'Data de Entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate ?? DateTime.now())}');
       Navigator.of(context).pop();
     } catch (e) {
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Ocorreu um erro!'),
-          content: const Text('Ocorreu um erro para salvar.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(
+          context, 'Ocorreu um erro!', 'Não foi possível salvar o empréstimo');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -373,7 +349,7 @@ class _LendingFormPageState extends State<LendingFormPage> {
                           child: SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed: _submitForm,
+                              onPressed: () => _submitForm(context),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),

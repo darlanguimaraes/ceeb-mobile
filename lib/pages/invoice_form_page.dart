@@ -1,7 +1,7 @@
+import 'package:ceeb_mobile/components/dialog.dart';
 import 'package:ceeb_mobile/dto/invoice_dto.dart';
 import 'package:ceeb_mobile/models/category.dart';
 import 'package:ceeb_mobile/models/invoice.dart';
-import 'package:ceeb_mobile/providers/category_provider.dart';
 import 'package:ceeb_mobile/providers/invoice_provider.dart';
 import 'package:ceeb_mobile/utils/enum_payment_type.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +53,7 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
     }
   }
 
-  Future<void> _submitForm() async {
+  Future<void> _submitForm(BuildContext context) async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
@@ -77,35 +77,12 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
 
       await Provider.of<InvoiceProvider>(context, listen: false)
           .persist(invoice);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('SUCESSO!'),
-          content: const Text('Conta Registrada.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(context, 'SUCESSO', 'Conta registrada');
       Navigator.of(context).pop();
     } catch (e) {
       print(e);
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Ocorreu um erro!'),
-          content: const Text('Ocorreu um erro para salvar.'),
-          actions: [
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      );
+      await Dialogs.showMyDialog(
+          context, 'Ocorreu um erro!', 'Não foi possível salvar a conta');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -241,7 +218,7 @@ class _InvoiceFormPageState extends State<InvoiceFormPage> {
                           child: SizedBox(
                             width: 150,
                             child: ElevatedButton(
-                              onPressed: _submitForm,
+                              onPressed: () => _submitForm(context),
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),

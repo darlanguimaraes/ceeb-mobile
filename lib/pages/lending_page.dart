@@ -83,7 +83,8 @@ class _LendingPageState extends State<LendingPage> {
                               itemCount: lending.count,
                               itemBuilder: ((ctx, index) => Column(
                                     children: [
-                                      LendingListItem(lending.lendings[index]),
+                                      LendingListItem(
+                                          lending.lendings[index], true),
                                       const Divider(),
                                     ],
                                   )),
