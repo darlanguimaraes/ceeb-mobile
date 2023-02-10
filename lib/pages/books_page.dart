@@ -59,17 +59,28 @@ class _BooksPageState extends State<BooksPage> {
               Row(
                 children: [
                   SizedBox(
-                    width: 300,
+                    width:
+                        deviceSize.width > 700 ? 500 : deviceSize.width - 150,
                     child: TextField(
                         controller: filterController,
                         decoration:
                             const InputDecoration(labelText: 'Pesquisar')),
                   ),
                   ElevatedButton(
-                      onPressed: () => setState(() {
-                            getList = _loadBooks(context);
-                          }),
-                      child: const Text('filtrar')),
+                    onPressed: () => setState(() {
+                      getList = _loadBooks(context);
+                    }),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 20,
+                      ),
+                    ),
+                    child: const Text('filtrar'),
+                  ),
                 ],
               ),
               Expanded(

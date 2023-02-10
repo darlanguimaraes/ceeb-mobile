@@ -25,10 +25,12 @@ class LendingListItem extends StatelessWidget {
                 ? const Icon(
                     Icons.check_circle_outline,
                     color: Colors.green,
+                    size: 35,
                   )
                 : Icon(
                     Icons.error_outline,
                     color: lending.isLate ? Colors.red : Colors.amber,
+                    size: 35,
                   ),
           ],
         ),
@@ -42,13 +44,17 @@ class LendingListItem extends StatelessWidget {
                       ? const Icon(
                           Icons.check,
                           color: Colors.green,
+                          size: 35,
                         )
                       : IconButton(
                           onPressed: () => Navigator.of(context).pushNamed(
                             AppRoutes.lendingReturn,
                             arguments: lending,
                           ),
-                          icon: const Icon(Icons.arrow_circle_left_outlined),
+                          icon: const Icon(
+                            Icons.arrow_circle_left_outlined,
+                            size: 35,
+                          ),
                           color: Theme.of(context).primaryColor,
                         ),
                 ],

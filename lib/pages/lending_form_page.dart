@@ -133,10 +133,22 @@ class _LendingFormPageState extends State<LendingFormPage> {
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Text(bookName.isEmpty
-                              ? 'Pesquise o livro no botão ao lado'
-                              : '$bookName - $bookCode'),
-                          IconButton(
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              bookName.isEmpty
+                                  ? '''Pesquise o livro no botão ao lado'''
+                                  : '$bookName - $bookCode',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 4,
+                            ),
+                          ),
+                          const Spacer(),
+                          ElevatedButton.icon(
                             onPressed: () => showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -146,26 +158,32 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                     width: deviceSize.width - 100,
                                     child: Column(
                                       children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: deviceSize.width / 2,
-                                              child: TextField(
-                                                controller:
-                                                    filterBookController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                        labelText: 'Pesquisar'),
-                                              ),
+                                        SizedBox(
+                                          width: deviceSize.width / 2,
+                                          child: TextField(
+                                            controller: filterBookController,
+                                            decoration: const InputDecoration(
+                                                labelText: 'Pesquisar'),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ElevatedButton.icon(
+                                          onPressed: () => setState(() {
+                                            getListBooks =
+                                                _loadBooksFilter(context);
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
                                             ),
-                                            IconButton(
-                                              onPressed: () => setState(() {
-                                                getListBooks =
-                                                    _loadBooksFilter(context);
-                                              }),
-                                              icon: Icon(Icons.search),
-                                            )
-                                          ],
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 20,
+                                              vertical: 10,
+                                            ),
+                                          ),
+                                          icon: const Icon(Icons.search),
+                                          label: const Text('Pesquisar'),
                                         ),
                                         Expanded(
                                           child: FutureBuilder(
@@ -196,9 +214,8 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                                                           title: Text(values
                                                                               .books[index]
                                                                               .name!),
-                                                                          subtitle: Text(values
-                                                                              .books[index]
-                                                                              .code!),
+                                                                          subtitle:
+                                                                              Text('${values.books[index].code!} - ${values.books[index].edition}'),
                                                                           trailing: values.books[index].borrow == false
                                                                               ? IconButton(
                                                                                   onPressed: () {
@@ -212,11 +229,13 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                                                                   icon: const Icon(
                                                                                     Icons.check_circle_outline,
                                                                                     color: Colors.green,
+                                                                                    size: 40,
                                                                                   ),
                                                                                 )
                                                                               : const Icon(
                                                                                   Icons.error_outline,
                                                                                   color: Colors.red,
+                                                                                  size: 40,
                                                                                 ),
                                                                         ),
                                                                         const Divider(),
@@ -234,17 +253,39 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                 );
                               },
                             ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
+                            ),
                             icon: const Icon(Icons.search),
+                            label: const Text('Pesquisar'),
                           )
                         ],
                       ),
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Text(readerName.isEmpty
-                              ? 'Pesquise o leitor no botão ao lado'
-                              : readerName),
-                          IconButton(
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              readerName.isEmpty
+                                  ? '''Pesquise o leitor no botão ao lado'''
+                                  : readerName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                            ),
+                          ),
+                          const Spacer(),
+                          ElevatedButton.icon(
                             onPressed: () => showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -254,26 +295,29 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                     width: deviceSize.width - 100,
                                     child: Column(
                                       children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: deviceSize.width / 2,
-                                              child: TextField(
-                                                controller:
-                                                    filterReaderController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                        labelText: 'Pesquisar'),
-                                              ),
+                                        TextField(
+                                          controller: filterReaderController,
+                                          decoration: const InputDecoration(
+                                              labelText: 'Pesquisar'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ElevatedButton.icon(
+                                          onPressed: () => setState(() {
+                                            getListReaders =
+                                                _loadReadersFilter(context);
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
                                             ),
-                                            IconButton(
-                                              onPressed: () => setState(() {
-                                                getListReaders =
-                                                    _loadReadersFilter(context);
-                                              }),
-                                              icon: Icon(Icons.search),
-                                            )
-                                          ],
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 20,
+                                              vertical: 10,
+                                            ),
+                                          ),
+                                          icon: const Icon(Icons.search),
+                                          label: const Text('Pesquisar'),
                                         ),
                                         Expanded(
                                           child: FutureBuilder(
@@ -316,11 +360,13 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                                                                   icon: const Icon(
                                                                                     Icons.check_circle_outline,
                                                                                     color: Colors.green,
+                                                                                    size: 40,
                                                                                   ),
                                                                                 )
                                                                               : const Icon(
                                                                                   Icons.error_outline,
                                                                                   color: Colors.red,
+                                                                                  size: 40,
                                                                                 ),
                                                                         ),
                                                                         const Divider(),
@@ -338,6 +384,16 @@ class _LendingFormPageState extends State<LendingFormPage> {
                                 );
                               },
                             ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
+                            ),
+                            label: const Text('Pesquisar'),
                             icon: const Icon(Icons.search),
                           )
                         ],

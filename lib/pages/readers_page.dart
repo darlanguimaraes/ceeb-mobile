@@ -59,16 +59,28 @@ class _ReadersPageState extends State<ReadersPage> {
               Row(
                 children: [
                   SizedBox(
-                    width: 250,
+                    width:
+                        deviceSize.width > 700 ? 500 : deviceSize.width - 150,
                     child: TextField(
                       controller: filterController,
                       decoration: const InputDecoration(labelText: 'Pesquisar'),
                     ),
                   ),
                   ElevatedButton(
-                      onPressed: () => setState(() {
-                            getList = _loadReaders(context);
-                          }),
+                      onPressed: () => setState(
+                            () {
+                              getList = _loadReaders(context);
+                            },
+                          ),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 20,
+                        ),
+                      ),
                       child: const Text('Pesquisar'))
                 ],
               ),

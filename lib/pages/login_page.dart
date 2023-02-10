@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await auth.authenticate(_formData['username']!, _formData['password']!);
     } catch (e) {
-      _showErrorDialog('Não foi possível');
+      _showErrorDialog(e.toString());
     }
     setState(() => _isLoading = false);
   }
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                                 validator: (_password) {
                                   final password = _password ?? '';
                                   if (password.trim().isEmpty ||
-                                      password.length < 5) {
+                                      password.length < 4) {
                                     return 'Senha inválida';
                                   }
                                   return null;

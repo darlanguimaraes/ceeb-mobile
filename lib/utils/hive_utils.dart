@@ -37,7 +37,7 @@ class HiveUtils {
       user.username = 'ceeb';
       user.email = 'ceeb@email.com';
       user.password =
-          new DBCrypt().hashpw('ceebceeb', new DBCrypt().gensaltWithRounds(8));
+          new DBCrypt().hashpw('ceeb', new DBCrypt().gensaltWithRounds(8));
       user.updateAt = DateTime.now();
       await users.put(user.id, user);
     }

@@ -19,8 +19,8 @@ class UserController {
       }
     } catch (e) {
       print(e);
-      throw Exception('User not found');
+      throw Exception('Usuário e/ou senha inválidos');
     }
-    throw Exception('User not found');
+    throw Exception('Usuário e/ou senha inválidos');
   }
 }
