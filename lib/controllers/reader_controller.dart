@@ -1,5 +1,6 @@
 import 'package:ceeb_mobile/models/reader.dart';
 import 'package:ceeb_mobile/utils/enum_table_name.dart';
+import 'package:ceeb_mobile/utils/string_utils.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,15 +19,17 @@ class ReaderController {
     }
   }
 
-  Future<List<Reader>> find(String? name) async {
-    if (name == null || name.isEmpty) {
+  Future<List<Reader>> find(String? text) async {
+    if (text == null || text.isEmpty) {
       return list();
     }
+    final name = StringUtils.removeDiacritics(text);
     try {
       final readers = await Hive.openBox<Reader>(TableName.reader.name);
       final listReaders = readers.values
-          .where((reader) =>
-              reader.name!.toLowerCase().contains(name.toLowerCase()))
+          .where((reader) => StringUtils.removeDiacritics(reader.name!)
+              .toLowerCase()
+              .contains(name.toLowerCase()))
           .toList();
       listReaders.sort(
           (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));

@@ -79,7 +79,7 @@ class _BooksPageState extends State<BooksPage> {
                         vertical: 20,
                       ),
                     ),
-                    child: const Text('filtrar'),
+                    child: const Text('Pesquisar'),
                   ),
                 ],
               ),
