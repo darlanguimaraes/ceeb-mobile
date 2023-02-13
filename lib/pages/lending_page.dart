@@ -45,6 +45,17 @@ class _LendingPageState extends State<LendingPage> {
         ],
       ),
       drawer: const AppDrawer(),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: FloatingActionButton.extended(
+          onPressed: () =>
+              Navigator.of(context).pushNamed(AppRoutes.lendingForm),
+          backgroundColor: Colors.blue,
+          icon: const Icon(Icons.add),
+          label: const Text('Novo'),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(10),
