@@ -43,8 +43,15 @@ class Invoices extends StatelessWidget {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: FloatingActionButton.extended(
-          onPressed: () =>
-              Navigator.of(context).pushNamed(AppRoutes.invoiceForm),
+          onPressed: () {
+            final invoiceDTO = InvoiceDTO(
+                Provider.of<CategoryProvider>(context, listen: false)
+                    .categories);
+            Navigator.of(context).pushNamed(
+              AppRoutes.invoiceForm,
+              arguments: invoiceDTO,
+            );
+          },
           backgroundColor: Colors.blue,
           icon: const Icon(Icons.add),
           label: const Text('Novo'),
