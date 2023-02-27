@@ -137,7 +137,7 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
               ),
               if (_lending.isLate)
                 const Text(
-                  'Entrega em atrso',
+                  'Entrega em atraso',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -146,7 +146,7 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
                 ),
               if (_lending.isLate)
                 Text(
-                  _lending.lateDays.toString(),
+                  '${_lending.lateDays.toString()} dias',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
