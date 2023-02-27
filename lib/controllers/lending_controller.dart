@@ -11,11 +11,20 @@ class LendingController {
   Future<List<Lending>> list() async {
     try {
       final lendings = await Hive.openBox<Lending>(TableName.lending.name);
-      return lendings.values.toList();
+      return getReaderPhone(lendings.values.toList());
     } catch (e) {
       print(e);
       throw (Exception(e));
     }
+  }
+
+  Future<List<Lending>> getReaderPhone(List<Lending> values) async {
+    ReaderController readerController = ReaderController();
+    for (var lending in values) {
+      final reader = await readerController.getReader(lending.readerId ?? '');
+      lending.readerPhone = reader?.phone;
+    }
+    return values;
   }
 
   Future<List<Lending>> listForSynchronize() async {
@@ -32,11 +41,11 @@ class LendingController {
     try {
       final lendings = await Hive.openBox<Lending>(TableName.lending.name);
       if (!open) {
-        return lendings.values.toList();
+        return getReaderPhone(lendings.values.toList());
       } else {
-        return lendings.values
+        return getReaderPhone(lendings.values
             .where((lending) => lending.returned == false)
-            .toList();
+            .toList());
       }
     } catch (e) {
       print(e);

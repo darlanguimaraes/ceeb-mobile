@@ -83,7 +83,7 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
             controller: ScrollController(keepScrollOffset: false),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(30),
             children: [
               const Text(
                 'Livro',
@@ -107,6 +107,14 @@ class _LendingReturnPageState extends State<LendingReturnPage> {
               ),
               Text(
                 _lending.readerName!,
+                style: styleLabel,
+              ),
+              const Text(
+                'Telefone',
+                style: styleTitle,
+              ),
+              Text(
+                _lending.readerPhone!,
                 style: styleLabel,
               ),
               const Text(

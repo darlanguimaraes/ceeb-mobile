@@ -49,6 +49,8 @@ class Lending extends HiveObject {
   @HiveField(16)
   String? bookEdition;
 
+  String? readerPhone;
+
   bool get isLate {
     final DateTime actual = DateTime.now();
     final value = expectedDate!.compareTo(actual);
@@ -57,7 +59,7 @@ class Lending extends HiveObject {
 
   int get lateDays {
     final DateTime actual = DateTime.now();
-    return expectedDate!.difference(actual).inDays;
+    return actual.difference(expectedDate!).inDays;
   }
 
   Map<String, dynamic> toJson(String remoteBookId, String remoteReaderId) => {
