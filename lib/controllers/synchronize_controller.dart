@@ -12,11 +12,12 @@ import 'package:ceeb_mobile/models/lending.dart';
 import 'package:ceeb_mobile/models/reader.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer' as developer;
 
 class SynchronizeController {
   final uuid = Uuid();
-  final baseUrl = 'https://ceeb-admin.vercel.app/api';
-  // final baseUrl = 'http://192.168.1.6:3000/api';
+  // final baseUrl = 'https://ceeb-admin.vercel.app/api';
+  final baseUrl = 'http://192.168.1.9:3000/api';
 
   Future<String> synchronize(String username, String password) async {
     try {
@@ -29,7 +30,7 @@ class SynchronizeController {
 
       return 'Dados sincronizados!';
     } catch (e) {
-      print(e);
+      developer.log(e.toString());
       return 'Erro ao sincronizar os dados: $e';
     }
   }
@@ -244,9 +245,19 @@ class SynchronizeController {
     if (lendings.isNotEmpty) {
       final List listLendings = [];
       for (var element in lendings) {
-        final book = await bookController.getBook(element.bookId!);
-        final reader = await readerController.getReader(element.readerId!);
-        listLendings.add(element.toJson(book!.remoteId!, reader!.remoteId!));
+        if (element.readerId != null &&
+            element.readerId != '' &&
+            element.bookId != null &&
+            element.bookId != '') {
+          final book = await bookController.getBook(element.bookId!);
+          final reader = await readerController.getReader(element.readerId!);
+          if (book != null || reader != null) {
+            listLendings
+                .add(element.toJson(book!.remoteId!, reader!.remoteId!));
+          }
+        } else {
+          await lendingController.delete(element.id!);
+        }
       }
       final body = json.encoder.convert(listLendings);
 

@@ -38,6 +38,14 @@ class _BookFormPageState extends State<BookFormPage> {
     }
   }
 
+  void _cloneForm(BuildContext context) async {
+    setState(() {
+      _formData.remove("id");
+    });
+    await Dialogs.showMyDialog(context, 'Atenção!',
+        'Os dados do livro serão copiados para um novo registro ao salvar. Altere os dados de Edição e/ou Código');
+  }
+
   Future<void> _submitForm(BuildContext context) async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
@@ -145,21 +153,41 @@ class _BookFormPageState extends State<BookFormPage> {
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 30),
                         child: Align(
-                          child: SizedBox(
-                            width: 150,
-                            child: ElevatedButton(
-                              onPressed: () => _submitForm(context),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => _submitForm(context),
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 8,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 8,
-                                ),
+                                child: const Text('Salvar'),
                               ),
-                              child: const Text('Salvar'),
-                            ),
+                              const SizedBox(width: 50),
+                              _formData["id"] != null
+                                  ? ElevatedButton(
+                                      onPressed: () => _cloneForm(context),
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 30,
+                                          vertical: 8,
+                                        ),
+                                        backgroundColor: Colors.amber,
+                                      ),
+                                      child: const Text('Clonar'),
+                                    )
+                                  : const SizedBox(),
+                            ],
                           ),
                         ),
                       ),

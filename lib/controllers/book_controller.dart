@@ -2,11 +2,10 @@ import 'package:ceeb_mobile/models/book.dart';
 import 'package:ceeb_mobile/utils/enum_table_name.dart';
 import 'package:ceeb_mobile/utils/string_utils.dart';
 import 'package:hive/hive.dart';
-import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 class BookController {
-  final uuid = Uuid();
+  final uuid = const Uuid();
   Future<List<Book>> list() async {
     try {
       final books = await Hive.openBox<Book>(TableName.book.name);
@@ -30,8 +29,12 @@ class BookController {
       final filtered = books.values.where((book) {
         if (name.isNotEmpty) {
           if (StringUtils.removeDiacritics(book.name!)
-              .toLowerCase()
-              .contains(name.toLowerCase())) {
+                  .toLowerCase()
+                  .contains(name.toLowerCase()) ||
+              book.author != null &&
+                  StringUtils.removeDiacritics(book.author!)
+                      .toLowerCase()
+                      .contains(name.toLowerCase())) {
             return true;
           }
           if (book.code!.toLowerCase().contains(name.toLowerCase())) {

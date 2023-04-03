@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryController {
-  final uuid = Uuid();
+  final uuid = const Uuid();
   Future<List<Category>> list() async {
     try {
       final categories = await Hive.openBox<Category>(TableName.category.name);

@@ -13,4 +13,5 @@ class AppRoutes {
   static const lendingForm = '/lending-form';
   static const lendingReturn = '/lending-return';
   static const synchronize = '/synchronize';
+  static const backup = '/backup';
 }

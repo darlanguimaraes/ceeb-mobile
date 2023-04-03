@@ -111,4 +111,9 @@ class LendingController {
       return null;
     }
   }
+
+  Future<void> delete(String id) async {
+    final lendings = await Hive.openBox<Lending>(TableName.lending.name);
+    await lendings.delete(id);
+  }
 }

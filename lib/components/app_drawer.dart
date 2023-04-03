@@ -75,6 +75,13 @@ class AppDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
+              leading: const Icon(Icons.backup),
+              title: const Text('Backup'),
+              onTap: () =>
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.backup),
+            ),
+            const Divider(),
+            ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Sair'),
               onTap: () {

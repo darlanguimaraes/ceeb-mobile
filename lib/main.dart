@@ -1,3 +1,4 @@
+import 'package:ceeb_mobile/pages/backup_page.dart';
 import 'package:ceeb_mobile/pages/book_form_page.dart';
 import 'package:ceeb_mobile/pages/books_page.dart';
 import 'package:ceeb_mobile/pages/categories_page.dart';
@@ -13,6 +14,7 @@ import 'package:ceeb_mobile/pages/reader_form_page.dart';
 import 'package:ceeb_mobile/pages/readers_page.dart';
 import 'package:ceeb_mobile/pages/synchronize_page.dart';
 import 'package:ceeb_mobile/providers/auth_provider.dart';
+import 'package:ceeb_mobile/providers/backup_provider.dart';
 import 'package:ceeb_mobile/providers/book_provider.dart';
 import 'package:ceeb_mobile/providers/category_provider.dart';
 import 'package:ceeb_mobile/providers/invoice_provider.dart';
@@ -46,6 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ReaderProvider()),
         ChangeNotifierProvider(create: (_) => BookProvider()),
         ChangeNotifierProvider(create: (_) => LendingProvider()),
+        ChangeNotifierProvider(create: (_) => BackupProvider()),
       ],
       child: MaterialApp(
         title: 'CEEB',
@@ -85,6 +88,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.lendingForm: (ctx) => const LendingFormPage(),
           AppRoutes.lendingReturn: (ctx) => const LendingReturnPage(),
           AppRoutes.synchronize: (ctx) => const SynchronizePage(),
+          AppRoutes.backup: (ctx) => const BackupPage(),
         },
         debugShowCheckedModeBanner: false,
       ),

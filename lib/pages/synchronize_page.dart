@@ -110,9 +110,12 @@ class _SynchronizePageState extends State<SynchronizePage> {
                     child: Text(
                       _message,
                       style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 10,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.justify,
                     ),
                   ),
                 ],
