@@ -59,6 +59,13 @@ class _LendingFormPageState extends State<LendingFormPage> {
     _formKey.currentState?.save();
     setState(() => _isLoading = true);
 
+    if (readerId == '' || bookId == '' || dateController.text == '') {
+      await Dialogs.showMyDialog(
+          context, 'Atenção!', 'Preencha todas as informações!');
+      setState(() => _isLoading = false);
+      return;
+    }
+
     try {
       final dateBorrow = DateFormat('dd/MM/yyyy').parse(dateController.text);
 

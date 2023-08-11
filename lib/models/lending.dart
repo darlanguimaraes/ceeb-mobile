@@ -73,5 +73,6 @@ class Lending extends HiveObject {
             deliveryDate != null ? deliveryDate!.toIso8601String() : null,
         "code": code,
         "returned": returned,
+        "remoteId": remoteId,
       };
 }

@@ -16,8 +16,8 @@ import 'dart:developer' as developer;
 
 class SynchronizeController {
   final uuid = Uuid();
-  // final baseUrl = 'https://ceeb-admin.vercel.app/api';
-  final baseUrl = 'http://192.168.1.9:3000/api';
+  final baseUrl = 'https://ceeb-admin.vercel.app/api';
+  // final baseUrl = 'http://192.168.1.9:3000/api';
 
   Future<String> synchronize(String username, String password) async {
     try {
